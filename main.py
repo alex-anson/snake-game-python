@@ -28,7 +28,7 @@ while key != ESC:
     win.addstr(0, 2, 'Score: ' + str(score) + ' ')  # Add a string
                             # (3rd argument) at 0,2 (y,x). (no idea why
                             # there's a space after the score variable)
-    win.timeout(150 - (len(snake)) // 5 + len(snake) // 10 % 10)  # Increase speed
+    win.timeout(150 - (len(snake)) // 5 + len(snake) // 10 % 120)  # Increase speed
 
     prev_key = key
     event = win.getch()  # Wait for the next user input
