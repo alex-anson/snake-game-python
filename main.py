@@ -1,4 +1,5 @@
 import curses
+from random import randint  # Module that gives a random integer
 
 # SETUP WINDOW
 curses.initscr()  # init screen
@@ -27,7 +28,7 @@ while key != ESC:
     win.addstr(0, 2, 'Score: ' + str(score) + ' ')  # Add a string
                             # (3rd argument) at 0,2 (y,x). (no idea why
                             # there's a space after the score variable)
-    win.timeout(150 - (len(snake)) // 5 + len(snake) // 10 % 120)  # Increase speed
+    win.timeout(150 - (len(snake)) // 5 + len(snake) // 10 % 10)  # Increase speed
 
     prev_key = key
     event = win.getch()  # Wait for the next user input
@@ -41,12 +42,51 @@ while key != ESC:
         key = prev_key
 
     # Calculate the next coordinates for the snake, starting with the head
-    y = snake[0][0]
+    # Get the current coordinates
+    y = snake[0][0]  # The head
+    x = snake[0][1]
+    if key == curses.KEY_DOWN:  # okay, this isn't a tutorial. it's a code along... i'm slightly annoyed. #TrustTheProcess ;)
+        y += 1
+    if key == curses.KEY_UP:
+        y -= 1
+    if key == curses.KEY_LEFT:
+        x -= 1
+    if key == curses.KEY_RIGHT:
+        x += 1
 
-    for s in snake:
-        win.addch(s[0], s[1], '*')  # (y, x, character to use)
+    snake.insert(0, (y, x))
+
+    # Check if the snake hit the border
+    if y == 0:
+        break
+    if y == 19:
+        break
+    if x == 0:
+        break
+    if x == 59:
+        break
+
+    # Check if the snake hit itself
+    if snake[0] in snake[1:]:
+        break
+
+    # Check if snake got to the food
+    if snake[0] == food:
+        # Eat the food
+        score += 1
+        # Make new food
+        food = ()            # While food = empty tuple, make new food
+        while food == ():
+            food = (randint(1, 18), randint(1, 58))
+            if food in snake:  # Don't let it generate new food that's inside the snake
+                food = ()
+        win.addch(food[0], food[1], '#')
+    else:  # Move snake
+        last = snake.pop()
+        win.addch(last[0], last[1], ' ')
 
     win.addch(food[0], food[1], '#')
+    win.addch(snake[0][0], snake[0][1], '*')
 
 # SHUT THE GAME DOWN
 curses.endwin()  # Destroys the window
